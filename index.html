@@ -12,7 +12,6 @@
             --primary-red: #ff0000;
             --bg-black: #000000;
             --card-bg: #0a0a0a;
-            --border-color: #222;
         }
 
         body {
@@ -31,7 +30,7 @@
             width: 100%;
             max-width: 850px;
             background: var(--bg-black);
-            border: 1px solid var(--border-color);
+            border: 1px solid #222;
             border-radius: 10px;
             box-shadow: 0 0 50px rgba(255, 0, 0, 0.2);
             overflow: hidden;
@@ -48,7 +47,7 @@
 
         .dots { display: flex; gap: 8px; }
         .dot { width: 12px; height: 12px; border-radius: 50%; background: #222; }
-        .dot.active { background: var(--primary-red); box-shadow: 0 0 10px var(--primary-red); }
+        .dot.active { background: var(--primary-red); }
 
         .content { padding: 30px; }
 
@@ -58,7 +57,6 @@
             filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.4));
         }
 
-        /* تنسيق العبارة: KGT بالأحمر وعلى اليسار */
         .org-header-left {
             font-family: 'Fira Code', monospace;
             font-size: 18px;
@@ -69,12 +67,39 @@
             align-items: center;
             gap: 10px;
             direction: ltr;
-            padding-left: 5px;
         }
         
-        .kgt-red { color: var(--primary-red); letter-spacing: 2px; text-shadow: 0 0 5px rgba(255,0,0,0.3); }
-        .divider { color: #444; }
+        .kgt-red { color: var(--primary-red); letter-spacing: 2px; }
         .pso-white { color: #fff; letter-spacing: 1px; font-size: 15px; }
+
+        /* تنسيق زر الرابط الجديد */
+        .railway-link-container {
+            margin-bottom: 25px;
+            text-align: left;
+            padding-left: 5px;
+        }
+
+        .railway-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid var(--primary-red);
+            color: var(--primary-red);
+            padding: 8px 20px;
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+
+        .railway-btn:hover {
+            background: var(--primary-red);
+            color: #000;
+            box-shadow: 0 0 15px var(--primary-red);
+        }
 
         .admin-list {
             width: 100%;
@@ -104,7 +129,6 @@
             font-size: 11px;
             background: #000;
             color: #eee;
-            text-transform: uppercase;
         }
 
         .cipher-section { text-align: right; margin-top: 30px; }
@@ -124,10 +148,9 @@
             font-family: 'Cairo', sans-serif;
             margin-bottom: 15px;
             box-sizing: border-box;
-            transition: 0.3s;
         }
 
-        textarea:focus { border-color: var(--primary-red); box-shadow: 0 0 10px rgba(255, 0, 0, 0.1); }
+        textarea:focus { border-color: var(--primary-red); }
 
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
@@ -139,10 +162,9 @@
             font-weight: bold;
             cursor: pointer;
             transition: 0.3s;
-            font-family: 'Cairo', sans-serif;
         }
 
-        .kgt-btn:hover { background: var(--primary-red); color: #000; box-shadow: 0 0 20px var(--primary-red); }
+        .kgt-btn:hover { background: var(--primary-red); color: #000; }
 
         .footer {
             margin-top: 30px;
@@ -160,18 +182,24 @@
 <div class="terminal-window">
     <div class="header-bar">
         <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
-        <div style="color: #444; font-size: 11px; font-family: monospace;">KGT_SECURE_OS_V4.4_FINAL</div>
+        <div style="color: #444; font-size: 11px; font-family: monospace;">KGT_SECURE_OS_V4.5</div>
     </div>
 
     <div class="content">
         <div class="logo-container">
-            <img src="https://image2url.com/r2/default/images/1775407331513-22992673-cbbf-4fc5-97f6-67081bea1f3b.png" alt="KGT Logo" class="logo-main">
+            <img src="https://image2url.com/r2/default/images/1775409084914-9cdc8b5e-03e8-4ff7-b46e-235a13f4a55c.png" alt="KGT Logo" class="logo-main">
         </div>
         
         <div class="org-header-left">
             <span class="kgt-red">K.G.T</span>
             <span class="divider">|</span>
             <span class="pso-white">PUBLIC SECURITY ORGANIZATION</span>
+        </div>
+
+        <div class="railway-link-container">
+            <a href="https://kgt.up.railway.app/" target="_blank" class="railway-btn">
+                <i class="fas fa-external-link-alt"></i> الجدول 
+            </a>
         </div>
 
         <table class="admin-list">
@@ -193,20 +221,18 @@
         </table>
 
         <div class="cipher-section">
-            <div class="prompt"><b>root@KGT_SERVER</b>:~/ أدخل البيانات المراد معالجتها:</div>
-            <textarea id="inputBox" placeholder="اكتب النص هنا..."></textarea>
+            <div class="prompt"><b>root@KGT_SERVER</b>:~/ أدخل البيانات:</div>
+            <textarea id="inputBox" placeholder="اكتب هنا..."></textarea>
             
             <div class="btn-grid">
-                <button class="kgt-btn" onclick="execute(true)">[ تشفير آمن ]</button>
+                <button class="kgt-btn" onclick="execute(true)">[ تشفير ]</button>
                 <button class="kgt-btn" onclick="execute(false)">[ فك التشفير ]</button>
             </div>
-
-            <div class="prompt" style="margin-top:20px;"><b>system@output</b>:~/ النتيجة:</div>
-            <textarea id="outputBox" readonly placeholder="ستظهر النتائج هنا..."></textarea>
+            <textarea id="outputBox" readonly style="margin-top:15px;" placeholder="النتيجة..."></textarea>
         </div>
 
         <div class="footer">
-            >> [SYSTEM READY] | [KGT_AUTHORIZATION_LEVEL_MAX] | [SECURITY: ACTIVE]
+            >> [SYSTEM READY] | [LINK: SECURED] | [PSO_AUTH_ACTIVE]
         </div>
     </div>
 </div>
@@ -227,17 +253,10 @@
     function execute(isEnc) {
         const input = document.getElementById('inputBox').value;
         const outputField = document.getElementById('outputBox');
-        
-        if (!input) {
-            outputField.value = "";
-            return;
-        }
-
+        if (!input) return;
         let res = '';
         if (isEnc) {
-            for (let char of input) { 
-                res += map[char] || char; 
-            }
+            for (let char of input) { res += map[char] || char; }
         } else {
             let text = input;
             const keys = Object.keys(reverseMap).sort((a,b) => b.length - a.length);
