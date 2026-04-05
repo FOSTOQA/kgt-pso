@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KGT | Public Security Organization</title>
+    <title>KGT | تسجيل دخول آمن</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Fira+Code:wght@400;700&display=swap');
@@ -23,12 +23,62 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
         }
 
-        .terminal-window {
+        /* شاشة تسجيل الدخول */
+        #loginOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-black);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .login-box {
+            width: 320px;
+            padding: 40px;
+            background: #050505;
+            border: 1px solid #222;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(255, 0, 0, 0.15);
+        }
+
+        .login-box img { width: 90px; margin-bottom: 25px; filter: drop-shadow(0 0 5px var(--primary-red)); }
+        
+        .login-box input {
             width: 100%;
-            max-width: 850px;
+            padding: 12px;
+            margin-bottom: 15px;
+            background: #000;
+            border: 1px solid #333;
+            color: #fff;
+            box-sizing: border-box;
+            outline: none;
+            text-align: center;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .login-box input:focus { border-color: var(--primary-red); }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--primary-red);
+            color: var(--primary-red);
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .login-btn:hover { background: var(--primary-red); color: #000; }
+
+        /* المحتوى الرئيسي */
+        #mainContent { display: none; width: 100%; max-width: 850px; padding: 20px; }
+
+        .terminal-window {
             background: var(--bg-black);
             border: 1px solid #222;
             border-radius: 10px;
@@ -37,11 +87,8 @@
         }
 
         .header-bar {
-            background: #111;
-            padding: 10px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: #111; padding: 10px 15px;
+            display: flex; justify-content: space-between; align-items: center;
             border-bottom: 2px solid var(--primary-red);
         }
 
@@ -50,225 +97,123 @@
         .dot.active { background: var(--primary-red); }
 
         .content { padding: 30px; }
+        .logo-main { width: 110px; filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.4)); margin-bottom: 20px; }
 
-        .logo-container { text-align: center; margin-bottom: 20px; }
-        .logo-main {
-            width: 110px;
-            filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.4));
-        }
-
-        .org-header-left {
-            font-family: 'Fira Code', monospace;
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            gap: 10px;
-            direction: ltr;
-        }
-        
+        .org-header { font-size: 18px; font-weight: bold; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
         .kgt-red { color: var(--primary-red); letter-spacing: 2px; }
-        .pso-white { color: #fff; letter-spacing: 1px; font-size: 15px; }
 
-        /* تنسيق زر الرابط الجديد */
-        .railway-link-container {
-            margin-bottom: 25px;
-            text-align: left;
-            padding-left: 5px;
-        }
+        .admin-list { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 20px; }
+        .admin-row { background: var(--card-bg); border-right: 4px solid var(--primary-red); }
+        .admin-row td { padding: 15px; text-align: right; }
+        .admin-id { color: var(--primary-red); font-weight: bold; font-family: 'Fira Code', monospace; }
+        .admin-role { border: 1px solid #333; padding: 5px 12px; font-size: 11px; background: #000; color: #eee; }
 
-        .railway-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px solid var(--primary-red);
-            color: var(--primary-red);
-            padding: 8px 20px;
-            text-decoration: none;
-            font-family: 'Fira Code', monospace;
-            font-size: 13px;
-            font-weight: bold;
-            border-radius: 4px;
-            transition: 0.3s;
-        }
-
-        .railway-btn:hover {
-            background: var(--primary-red);
-            color: #000;
-            box-shadow: 0 0 15px var(--primary-red);
-        }
-
-        .admin-list {
-            width: 100%;
-            margin-bottom: 30px;
-            border-collapse: separate;
-            border-spacing: 0 8px;
-            direction: ltr;
-        }
-
-        .admin-row {
-            background: var(--card-bg);
-            border-left: 4px solid var(--primary-red);
-        }
-
-        .admin-row td {
-            padding: 15px;
-            color: #ccc;
-            text-align: left;
-        }
-
-        .admin-id { color: var(--primary-red); font-family: 'Fira Code', monospace; font-weight: bold; width: 120px; }
-        .admin-name { color: #fff; font-weight: bold; }
-        .admin-role {
-            border: 1px solid #333;
-            padding: 5px 12px;
-            border-radius: 4px;
-            font-size: 11px;
-            background: #000;
-            color: #eee;
-        }
-
-        .cipher-section { text-align: right; margin-top: 30px; }
-        .prompt { font-family: 'Fira Code', monospace; font-size: 13px; color: #888; margin-bottom: 10px; }
-        .prompt b { color: var(--primary-red); }
-
-        textarea {
-            width: 100%;
-            height: 100px;
-            background: #050505;
-            border: 1px solid #222;
-            color: #fff;
-            padding: 15px;
-            border-radius: 5px;
-            outline: none;
-            resize: none;
-            font-family: 'Cairo', sans-serif;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-        }
-
-        textarea:focus { border-color: var(--primary-red); }
-
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-
-        .kgt-btn {
-            background: transparent;
-            border: 1px solid var(--primary-red);
-            color: var(--primary-red);
-            padding: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
+        .cipher-section { margin-top: 30px; text-align: right; }
+        textarea { width: 100%; height: 80px; background: #050505; border: 1px solid #222; color: #fff; padding: 10px; margin-bottom: 10px; box-sizing: border-box; outline: none; font-family: 'Cairo', sans-serif; }
+        
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .kgt-btn { background: transparent; border: 1px solid var(--primary-red); color: var(--primary-red); padding: 10px; cursor: pointer; font-weight: bold; }
         .kgt-btn:hover { background: var(--primary-red); color: #000; }
 
-        .footer {
-            margin-top: 30px;
-            font-size: 11px;
-            color: #444;
-            text-align: left;
-            font-family: 'Fira Code', monospace;
-            border-top: 1px solid #111;
-            padding-top: 10px;
+        .railway-btn {
+            display: inline-block; padding: 8px 15px; border: 1px solid var(--primary-red);
+            color: var(--primary-red); text-decoration: none; font-size: 12px; margin-bottom: 20px;
         }
+
+        #errorMsg { color: var(--primary-red); font-size: 12px; margin-bottom: 10px; display: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="terminal-window">
-    <div class="header-bar">
-        <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
-        <div style="color: #444; font-size: 11px; font-family: monospace;">KGT_SECURE_OS_V4.5</div>
+    <div id="loginOverlay">
+        <div class="login-box">
+            <img src="https://image2url.com/r2/default/images/1775409084914-9cdc8b5e-03e8-4ff7-b46e-235a13f4a55c.png" alt="KGT Logo">
+            <div id="errorMsg">تم رفض الوصول: البيانات غير صحيحة</div>
+            <input type="text" id="username" placeholder="اسم المستخدم">
+            <input type="password" id="password" placeholder="كلمة المرور">
+            <button class="login-btn" onclick="checkLogin()">تسجيل الدخول</button>
+        </div>
     </div>
 
-    <div class="content">
-        <div class="logo-container">
-            <img src="https://image2url.com/r2/default/images/1775409084914-9cdc8b5e-03e8-4ff7-b46e-235a13f4a55c.png" alt="KGT Logo" class="logo-main">
-        </div>
-        
-        <div class="org-header-left">
-            <span class="kgt-red">K.G.T</span>
-            <span class="divider">|</span>
-            <span class="pso-white">PUBLIC SECURITY ORGANIZATION</span>
-        </div>
-
-        <div class="railway-link-container">
-            <a href="https://kgt.up.railway.app/" target="_blank" class="railway-btn">
-                <i class="fas fa-external-link-alt"></i> الجدول 
-            </a>
-        </div>
-
-        <table class="admin-list">
-            <tr class="admin-row">
-                <td class="admin-id">Alexander</td>
-                <td class="admin-name">Alexander Michael Smith</td>
-                <td><span class="admin-role">Director of KGT</span></td>
-            </tr>
-            <tr class="admin-row">
-                <td class="admin-id">Beta</td>
-                <td class="admin-name">Dutch Arthur</td>
-                <td><span class="admin-role">Deputy of KGT</span></td>
-            </tr>
-            <tr class="admin-row">
-                <td class="admin-id">Smith</td>
-                <td class="admin-name">William Smith</td>
-                <td><span class="admin-role">Executive of KGT</span></td>
-            </tr>
-        </table>
-
-        <div class="cipher-section">
-            <div class="prompt"><b>root@KGT_SERVER</b>:~/ أدخل البيانات:</div>
-            <textarea id="inputBox" placeholder="اكتب هنا..."></textarea>
-            
-            <div class="btn-grid">
-                <button class="kgt-btn" onclick="execute(true)">[ تشفير ]</button>
-                <button class="kgt-btn" onclick="execute(false)">[ فك التشفير ]</button>
+    <div id="mainContent">
+        <div class="terminal-window">
+            <div class="header-bar">
+                <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+                <div style="color: #444; font-size: 11px; font-family: monospace;">KGT_SECURE_OS_V7.0</div>
             </div>
-            <textarea id="outputBox" readonly style="margin-top:15px;" placeholder="النتيجة..."></textarea>
-        </div>
 
-        <div class="footer">
-            >> [SYSTEM READY] | [LINK: SECURED] | [PSO_AUTH_ACTIVE]
+            <div class="content">
+                <center><img src="https://image2url.com/r2/default/images/1775409084914-9cdc8b5e-03e8-4ff7-b46e-235a13f4a55c.png" class="logo-main"></center>
+                
+                <div class="org-header">
+                    <span class="kgt-red">K.G.T</span>
+                    <span style="color:#444">|</span>
+                    <span style="color:#fff; font-size: 15px;">منظمة الأمن العام</span>
+                </div>
+
+                <a href="https://kgt.up.railway.app/" target="_blank" class="railway-btn">
+                    <i class="fas fa-external-link-alt"></i> دخول رسمي للمنظمة
+                </a>
+
+                <table class="admin-list">
+                    <tr class="admin-row"><td class="admin-id">Alexander</td><td>Alexander Smith</td><td><span class="admin-role">Director of KGT</span></td></tr>
+                    <tr class="admin-row"><td class="admin-id">Beta</td><td>Dutch Arthur</td><td><span class="admin-role">Deputy of KGT</span></td></tr>
+                    <tr class="admin-row"><td class="admin-id">Smith</td><td>William Smith</td><td><span class="admin-role">Executive of KGT</span></td></tr>
+                </table>
+
+                <div class="cipher-section">
+                    <div style="color: #888; font-size: 12px; margin-bottom: 5px;">أدخل البيانات للتشفير أو فك التشفير:</div>
+                    <textarea id="inputBox" placeholder="اكتب النص هنا..."></textarea>
+                    <div class="btn-grid">
+                        <button class="kgt-btn" onclick="execute(true)">تشفير</button>
+                        <button class="kgt-btn" onclick="execute(false)">فك التشفير</button>
+                    </div>
+                    <textarea id="outputBox" readonly style="margin-top:10px;" placeholder="النتيجة تظهر هنا..."></textarea>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    const map = {
-        'أ': 'k1', 'ا': 'k2', 'ب': 'x7', 'ت': 'v3', 'ث': 'n9', 'ج': 'm2', 
-        'ح': 'h8', 'خ': 'p4', 'د': 'r1', 'ذ': 'q0', 'ر': 's6', 'ز': 'u5',
-        'س': 'w4', 'ش': 'z3', 'ص': 'y8', 'ض': 'b2', 'ط': 'o1', 'ظ': 'i7',
-        'ع': 'e5', 'غ': 'g4', 'ف': 'f0', 'ق': 'q1', 'ك': 'k9', 'ل': 'l3',
-        'م': 'm0', 'ن': 'n4', 'هـ': 'h1', 'و': 'w2', 'ي': 'y5', 'ة': 't0',
-        ' ': '..', 'ى': 'a8', 'ئ': 'e1', 'ء': 'x0'
-    };
+    <script>
+        const MASTER_USER = "TEST";
+        const MASTER_PASS = "TEST";
 
-    const reverseMap = {};
-    for (let key in map) { reverseMap[map[key]] = key; }
+        function checkLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const error = document.getElementById('errorMsg');
 
-    function execute(isEnc) {
-        const input = document.getElementById('inputBox').value;
-        const outputField = document.getElementById('outputBox');
-        if (!input) return;
-        let res = '';
-        if (isEnc) {
-            for (let char of input) { res += map[char] || char; }
-        } else {
-            let text = input;
-            const keys = Object.keys(reverseMap).sort((a,b) => b.length - a.length);
-            for (let k of keys) {
-                let regex = new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                text = text.replace(regex, reverseMap[k]);
+            if (user === MASTER_USER && pass === MASTER_PASS) {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+            } else {
+                error.style.display = 'block';
+                setTimeout(() => { error.style.display = 'none'; }, 2500);
             }
-            res = text;
         }
-        outputField.value = res;
-    }
-</script>
 
+        const map = {'أ': 'k1', 'ا': 'k2', 'ب': 'x7', 'ت': 'v3', 'ث': 'n9', 'ج': 'm2', 'ح': 'h8', 'خ': 'p4', 'د': 'r1', 'ذ': 'q0', 'ر': 's6', 'ز': 'u5', 'س': 'w4', 'ش': 'z3', 'ص': 'y8', 'ض': 'b2', 'ط': 'o1', 'ظ': 'i7', 'ع': 'e5', 'غ': 'g4', 'ف': 'f0', 'ق': 'q1', 'ك': 'k9', 'ل': 'l3', 'م': 'm0', 'ن': 'n4', 'هـ': 'h1', 'و': 'w2', 'ي': 'y5', 'ة': 't0', ' ': '..', 'ى': 'a8', 'ئ': 'e1', 'ء': 'x0'};
+        const reverseMap = {};
+        for (let key in map) { reverseMap[map[key]] = key; }
+
+        function execute(isEnc) {
+            const input = document.getElementById('inputBox').value;
+            const outputField = document.getElementById('outputBox');
+            if (!input) return;
+            let res = '';
+            if (isEnc) {
+                for (let char of input) { res += map[char] || char; }
+            } else {
+                let text = input;
+                const keys = Object.keys(reverseMap).sort((a,b) => b.length - a.length);
+                for (let k of keys) {
+                    let regex = new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                    text = text.replace(regex, reverseMap[k]);
+                }
+                res = text;
+            }
+            outputField.value = res;
+        }
+    </script>
 </body>
 </html>
