@@ -3,216 +3,327 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KGT | تسجيل دخول آمن</title>
+    <title>KGT | Elite Operations Center V11.2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Fira+Code:wght@400;700&display=swap');
-
-        :root {
-            --primary-red: #ff0000;
-            --bg-black: #000000;
-            --card-bg: #0a0a0a;
-        }
-
-        body {
-            background-color: var(--bg-black);
-            color: #fff;
-            font-family: 'Cairo', sans-serif;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        /* شاشة تسجيل الدخول */
-        #loginOverlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-black);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .login-box {
-            width: 320px;
-            padding: 40px;
-            background: #050505;
-            border: 1px solid #222;
-            text-align: center;
-            box-shadow: 0 0 40px rgba(255, 0, 0, 0.15);
-        }
-
-        .login-box img { width: 90px; margin-bottom: 25px; filter: drop-shadow(0 0 5px var(--primary-red)); }
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Share+Tech+Mono&display=swap');
+        :root { --primary-red: #ff0000; --bg-black: #000; --admin-gold: #ffcc00; --panel-dark: #080808; --status-green: #00ff00; }
         
-        .login-box input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            background: #000;
-            border: 1px solid #333;
-            color: #fff;
-            box-sizing: border-box;
-            outline: none;
-            text-align: center;
-            font-family: 'Cairo', sans-serif;
-        }
+        body { background: var(--bg-black); color: #fff; font-family: 'Cairo', sans-serif; margin: 0; min-height: 100vh; overflow: hidden; }
+        .mono { font-family: 'Share Tech Mono', monospace; }
 
-        .login-box input:focus { border-color: var(--primary-red); }
+        /* شاشة الدخول */
+        #authOverlay { position:fixed; inset:0; background:#000; display:flex; justify-content:center; align-items:center; z-index:4000; }
+        .auth-card { width:320px; text-align:center; background:#050505; padding:30px; border-radius:15px; border-top:3px solid var(--primary-red); box-shadow: 0 10px 30px rgba(255,0,0,0.2); }
+        .auth-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #222; padding-bottom: 10px; }
+        .auth-tab { flex: 1; cursor: pointer; font-size: 12px; color: #555; }
+        .auth-tab.active { color: var(--primary-red); border-bottom: 2px solid var(--primary-red); }
 
-        .login-btn {
-            width: 100%;
-            padding: 12px;
-            background: transparent;
-            border: 1px solid var(--primary-red);
-            color: var(--primary-red);
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-        }
+        /* الهيكل الرئيسي */
+        #mainDashboard { display: none; height: 100vh; padding: 15px; box-sizing: border-box; }
+        .top-nav { background: #111; padding: 12px 20px; border-radius: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary-red); }
+        .layout { display: grid; grid-template-columns: 240px 1fr 300px; gap: 15px; height: calc(100vh - 100px); }
 
-        .login-btn:hover { background: var(--primary-red); color: #000; }
+        /* الأزرار والقوائم */
+        .kgt-list-panel { background: rgba(10,10,10,0.8); border-radius: 10px; padding: 10px; border: 1px solid #222; margin-bottom: 15px; max-height: 250px; overflow-y: auto; }
+        .user-item { display: flex; align-items: center; justify-content: space-between; gap: 5px; margin-bottom: 8px; font-size: 12px; border-bottom: 1px solid #111; padding-bottom: 4px; }
+        .status-dot { width: 8px; height: 8px; background: #555; border-radius: 50%; }
+        .status-dot.online { background: var(--status-green); box-shadow: 0 0 5px var(--status-green); }
 
-        /* المحتوى الرئيسي */
-        #mainContent { display: none; width: 100%; max-width: 850px; padding: 20px; }
+        .duty-btn { width: 100%; background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 5px; cursor: pointer; margin-bottom: 15px; font-weight: bold; }
+        .duty-btn.on { border-color: var(--status-green); color: var(--status-green); background: rgba(0,255,0,0.05); }
 
-        .terminal-window {
-            background: var(--bg-black);
-            border: 1px solid #222;
-            border-radius: 10px;
-            box-shadow: 0 0 50px rgba(255, 0, 0, 0.2);
-            overflow: hidden;
-        }
+        .side-btn { width: 100%; padding: 12px; background: var(--panel-dark); border: 1px solid #222; color: #fff; margin-bottom: 8px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+        .admin-only { border-color: var(--admin-gold) !important; color: var(--admin-gold) !important; display: none; }
 
-        .header-bar {
-            background: #111; padding: 10px 15px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid var(--primary-red);
-        }
+        .glass-panel { background: var(--panel-dark); border: 1px solid #222; border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; }
+        .panel-header { padding: 10px; background: #111; border-bottom: 1px solid #222; font-size: 11px; font-weight: bold; color: var(--primary-red); }
+        .scroll-area { flex-grow: 1; overflow-y: auto; padding: 12px; }
 
-        .dots { display: flex; gap: 8px; }
-        .dot { width: 12px; height: 12px; border-radius: 50%; background: #222; }
-        .dot.active { background: var(--primary-red); }
+        /* شاشة الحظر */
+        #banOverlay { display:none; flex-direction:column; align-items:center; justify-content:center; background:rgba(20,0,0,0.95); border: 2px solid red; border-radius:10px; margin: 10px; height: 100%; }
+        .ban-logo { font-size: 50px; color: red; margin-bottom: 10px; animation: blink 1s infinite; }
+        @keyframes blink { 0% {opacity:1;} 50% {opacity:0.3;} 100% {opacity:1;} }
 
-        .content { padding: 30px; }
-        .logo-main { width: 110px; filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.4)); margin-bottom: 20px; }
+        /* التنسيقات العامة */
+        .msg { background: #121212; padding: 8px; border-radius: 6px; border-right: 3px solid var(--primary-red); font-size: 13px; margin-bottom: 8px; }
+        .adm-msg { border-right-color: var(--admin-gold); background: #1a1500; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 3000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: #0a0a0a; width: 100%; max-width: 550px; padding: 25px; border: 1px solid #333; border-radius: 12px; position: relative; max-height: 85vh; overflow-y: auto; }
+        .close-modal { position: absolute; top: 15px; left: 15px; cursor: pointer; color: #666; }
+        .input-dark { width: 100%; padding: 10px; background: #000; border: 1px solid #333; color: #fff; border-radius: 5px; margin-bottom: 10px; outline: none; box-sizing: border-box; }
+        .btn-red { background: var(--primary-red); color: white; border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; }
 
-        .org-header { font-size: 18px; font-weight: bold; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-        .kgt-red { color: var(--primary-red); letter-spacing: 2px; }
-
-        .admin-list { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 20px; }
-        .admin-row { background: var(--card-bg); border-right: 4px solid var(--primary-red); }
-        .admin-row td { padding: 15px; text-align: right; }
-        .admin-id { color: var(--primary-red); font-weight: bold; font-family: 'Fira Code', monospace; }
-        .admin-role { border: 1px solid #333; padding: 5px 12px; font-size: 11px; background: #000; color: #eee; }
-
-        .cipher-section { margin-top: 30px; text-align: right; }
-        textarea { width: 100%; height: 80px; background: #050505; border: 1px solid #222; color: #fff; padding: 10px; margin-bottom: 10px; box-sizing: border-box; outline: none; font-family: 'Cairo', sans-serif; }
-        
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .kgt-btn { background: transparent; border: 1px solid var(--primary-red); color: var(--primary-red); padding: 10px; cursor: pointer; font-weight: bold; }
-        .kgt-btn:hover { background: var(--primary-red); color: #000; }
-
-        .railway-btn {
-            display: inline-block; padding: 8px 15px; border: 1px solid var(--primary-red);
-            color: var(--primary-red); text-decoration: none; font-size: 12px; margin-bottom: 20px;
-        }
-
-        #errorMsg { color: var(--primary-red); font-size: 12px; margin-bottom: 10px; display: none; font-weight: bold; }
+        .mission-card { background: #111; padding: 10px; border-right: 4px solid #444; margin-bottom: 10px; border-radius: 4px; }
+        .status-done { border-right-color: var(--status-green); }
+        .status-pending { border-right-color: orange; }
     </style>
 </head>
 <body>
 
-    <div id="loginOverlay">
-        <div class="login-box">
-            <img src="https://image2url.com/r2/default/images/1775409084914-9cdc8b5e-03e8-4ff7-b46e-235a13f4a55c.png" alt="KGT Logo">
-            <div id="errorMsg">تم رفض الوصول: البيانات غير صحيحة</div>
-            <input type="text" id="username" placeholder="اسم المستخدم">
-            <input type="password" id="password" placeholder="كلمة المرور">
-            <button class="login-btn" onclick="checkLogin()">تسجيل الدخول</button>
+    <div id="authOverlay">
+        <div class="auth-card">
+            <div class="auth-tabs">
+                <div id="tabL" class="auth-tab active" onclick="setMode('login')">تسجيل دخول</div>
+                <div id="tabS" class="auth-tab" onclick="setMode('signup')">إنشاء حساب</div>
+            </div>
+            <h3 class="mono" style="color:red; font-size:12px; margin-bottom:15px;">KGT_SECURE_V11.2</h3>
+            <input type="text" id="uName" class="input-dark" placeholder="اسم المستخدم">
+            <input type="password" id="uPass" class="input-dark" placeholder="كلمة المرور">
+            <button onclick="handleAuth()" id="authBtn" class="btn-red">ACCESS SYSTEM</button>
         </div>
     </div>
 
-    <div id="mainContent">
-        <div class="terminal-window">
-            <div class="header-bar">
-                <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
-                <div style="color: #444; font-size: 11px; font-family: monospace;">KGT_SECURE_OS_V7.0</div>
+    <div id="mainDashboard">
+        <div class="top-nav">
+            <div class="mono">
+                <span id="admBadge" style="display:none; color:gold;">[ADMIN]</span>
+                <span id="userDisp" style="color: #00ff00;">---</span>
+            </div>
+            <div id="liveClock" class="mono" style="color:red;">00:00:00</div>
+        </div>
+
+        <div class="layout">
+            <div class="left-side">
+                <button id="statusBtn" class="duty-btn" onclick="toggleDuty()">OFF DUTY</button>
+                <div class="kgt-list-panel">
+                    <div style="font-size:10px; color:#444; margin-bottom:5px; text-align:center;">OPERATORS_STATUS</div>
+                    <div id="onlineList"></div>
+                </div>
+
+                <button class="side-btn admin-only" onclick="openModal('adminChatModal')">شات الإدارة <i class="fas fa-user-shield"></i></button>
+                <button class="side-btn" onclick="openModal('railwayPortalModal')" style="border-color:gold; color:gold;">بوابة Railway <i class="fas fa-globe"></i></button>
+                <button class="side-btn admin-only" onclick="openModal('addMissionModal')">تعيين مهمة <i class="fas fa-bullseye"></i></button>
+                <button class="side-btn admin-only" onclick="openModal('adminArchiveModal')">الأرشيف <i class="fas fa-folder-open"></i></button>
+                <button class="side-btn" onclick="openModal('missionModal')">المهمات <i class="fas fa-tasks"></i></button>
+                <button class="side-btn" onclick="openModal('cipherModal')">جهاز التشفير <i class="fas fa-terminal"></i></button>
+                <button class="side-btn" onclick="openModal('uploadModal')">رفع تقرير <i class="fas fa-upload"></i></button>
+                <button class="side-btn" onclick="handleLogout()" style="margin-top:20px; border-color:#500;">خروج <i class="fas fa-power-off"></i></button>
             </div>
 
-            <div class="content">
-                <center><img src="https://image2url.com/r2/default/images/1775409084914-9cdc8b5e-03e8-4ff7-b46e-235a13f4a55c.png" class="logo-main"></center>
+            <div class="glass-panel" id="chatContainer">
+                <div class="panel-header">SECURE_COMMUNICATION_LINE</div>
                 
-                <div class="org-header">
-                    <span class="kgt-red">K.G.T</span>
-                    <span style="color:#444">|</span>
-                    <span style="color:#fff; font-size: 15px;">منظمة الأمن العام</span>
-                </div>
-
-                <a href="https://kgt.up.railway.app/" target="_blank" class="railway-btn">
-                    <i class="fas fa-external-link-alt"></i> دخول رسمي للمنظمة
-                </a>
-
-                <table class="admin-list">
-                    <tr class="admin-row"><td class="admin-id">Alexander</td><td>Alexander Smith</td><td><span class="admin-role">Director of KGT</span></td></tr>
-                    <tr class="admin-row"><td class="admin-id">Beta</td><td>Dutch Arthur</td><td><span class="admin-role">Deputy of KGT</span></td></tr>
-                    <tr class="admin-row"><td class="admin-id">Smith</td><td>William Smith</td><td><span class="admin-role">Executive of KGT</span></td></tr>
-                </table>
-
-                <div class="cipher-section">
-                    <div style="color: #888; font-size: 12px; margin-bottom: 5px;">أدخل البيانات للتشفير أو فك التشفير:</div>
-                    <textarea id="inputBox" placeholder="اكتب النص هنا..."></textarea>
-                    <div class="btn-grid">
-                        <button class="kgt-btn" onclick="execute(true)">تشفير</button>
-                        <button class="kgt-btn" onclick="execute(false)">فك التشفير</button>
+                <div id="chatActiveUI" style="display:flex; flex-direction:column; height:100%;">
+                    <div class="scroll-area" id="chatScroll"><div id="chatBox"></div></div>
+                    <div style="padding:10px; background:#111; border-top:1px solid #222;">
+                        <div id="cooldownBar" style="height:2px; background:var(--status-green); width:0%; transition: linear; margin-bottom:5px;"></div>
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" id="msgInput" class="input-dark" style="margin-bottom:0" placeholder="اكتب رسالة..." onkeydown="if(event.key==='Enter') sendMsg(false)">
+                            <button id="sendBtn" onclick="sendMsg(false)" class="btn-red" style="width:60px;"><i class="fas fa-paper-plane"></i></button>
+                        </div>
                     </div>
-                    <textarea id="outputBox" readonly style="margin-top:10px;" placeholder="النتيجة تظهر هنا..."></textarea>
                 </div>
+
+                <div id="banOverlay">
+                    <div class="ban-logo"><i class="fas fa-user-slash"></i></div>
+                    <div style="color:red; font-weight:bold;">ACCESS DENIED</div>
+                    <div id="banTimer" style="font-size:12px; color:#666; margin-top:5px;">الحساب تحت طائلة العقوبة الإدارية</div>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <div class="panel-header">SYSTEM_LOGS</div>
+                <div id="logsDisplay" class="scroll-area mono" style="font-size:11px; color:#00ff00;">> Ready.</div>
             </div>
         </div>
     </div>
+
+    <div id="missionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('missionModal')">✖</span>
+            <h3>المهمات العملياتية</h3>
+            <div id="missionsListDisplay"></div>
+        </div>
+    </div>
+
+    <div id="cipherModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('cipherModal')">✖</span>
+            <h3>جهاز التشفير</h3>
+            <textarea id="cipherInput" class="input-dark" placeholder="أدخل النص هنا..."></textarea>
+            <div style="display:flex; gap:5px;">
+                <button onclick="handleCipher(true)" class="btn-red">تشفير</button>
+                <button onclick="handleCipher(false)" class="btn-red" style="background:#333;">فك</button>
+            </div>
+            <textarea id="cipherOutput" class="input-dark" readonly style="margin-top:10px; color:gold; height:80px;"></textarea>
+        </div>
+    </div>
+
+    <div id="adminChatModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('adminChatModal')">✖</span>
+            <h3 style="color:gold;">شات الإدارة</h3>
+            <div id="adminChatBox" class="scroll-area" style="height:200px; background:#050505;"></div>
+            <input type="text" id="adminMsgInput" class="input-dark" placeholder="رسالة إدارية...">
+            <button onclick="sendMsg(true)" class="btn-red" style="background:gold; color:#000;">إرسال</button>
+        </div>
+    </div>
+
+    <div id="adminArchiveModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="closeModal('adminArchiveModal')">✖</span><h3 style="color:gold;">الأرشيف المركزي</h3><div id="fullArchiveDisplay"></div></div></div>
+    <div id="railwayPortalModal" class="modal"><div class="modal-content" style="max-width:90%;"><span class="close-modal" onclick="closeModal('railwayPortalModal')">✖</span><iframe src="https://kgt.up.railway.app/" style="width:100%; height:70vh; border:none;"></iframe></div></div>
+    <div id="addMissionModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="closeModal('addMissionModal')">✖</span><h3>تعيين مهمة جديدة</h3><input id="mTitle" class="input-dark" placeholder="عنوان المهمة"><textarea id="mBody" class="input-dark" placeholder="تفاصيل المهمة"></textarea><button onclick="saveMission()" class="btn-red">نشر المهمة</button></div></div>
+    <div id="uploadModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="closeModal('uploadModal')">✖</span><h3>رفع تقرير ميداني</h3><input id="arcUrl" class="input-dark" placeholder="الرابط"><textarea id="arcDesc" class="input-dark" placeholder="وصف التقرير"></textarea><button onclick="submitToArchive()" class="btn-red">إرسال للأرشيف</button></div></div>
 
     <script>
-        const MASTER_USER = "TEST";
-        const MASTER_PASS = "TEST";
+        let mode = 'login';
+        let currentUser = sessionStorage.getItem("kgt_v9_user") || "";
+        let isAdmin = sessionStorage.getItem("kgt_v9_isAdmin") === "true";
+        let lastMsgTime = 0;
 
-        function checkLogin() {
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-            const error = document.getElementById('errorMsg');
+        const cMap = {'أ':'k1','ا':'k2','ب':'x7','ت':'v3','ث':'n9','ج':'m2','ح':'h8','خ':'p4','د':'r1','ذ':'q0','ر':'s6','ز':'u5','س':'w4','ش':'z3','ص':'y8','ض':'b2','ط':'o1','ظ':'i7','ع':'e5','غ':'g4','ف':'f0','ق':'q1','ك':'k9','ل':'l3','م':'m0','ن':'n4','هـ':'h1','و':'w2','ي':'y5','ة':'t0',' ':'..'};
+        const rMap = Object.fromEntries(Object.entries(cMap).map(([k, v]) => [v, k]));
 
-            if (user === MASTER_USER && pass === MASTER_PASS) {
-                document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
+        function setMode(m) {
+            mode = m;
+            document.getElementById('tabL').classList.toggle('active', m==='login');
+            document.getElementById('tabS').classList.toggle('active', m==='signup');
+            document.getElementById('authBtn').innerText = m==='login' ? 'ACCESS SYSTEM' : 'CREATE OPERATOR';
+        }
+
+        function handleAuth() {
+            const u = document.getElementById('uName').value.trim(), p = document.getElementById('uPass').value.trim();
+            if(!u || !p) return;
+            let users = JSON.parse(localStorage.getItem("kgt_v9_users") || "[]");
+            if(mode === 'signup') {
+                if(users.find(x => x.name === u)) return alert("الاسم محجوز");
+                users.push({ name: u, pass: p, isAdmin: u.toLowerCase().includes('admin'), onDuty: false, banUntil: 0 });
+                localStorage.setItem("kgt_v9_users", JSON.stringify(users));
+                alert("تم إنشاء الحساب بنجاح"); setMode('login');
             } else {
-                error.style.display = 'block';
-                setTimeout(() => { error.style.display = 'none'; }, 2500);
+                const user = users.find(x => x.name === u && x.pass === p);
+                if(user) {
+                    sessionStorage.setItem("kgt_v9_user", user.name);
+                    sessionStorage.setItem("kgt_v9_isAdmin", user.isAdmin);
+                    location.reload();
+                } else alert("البيانات غير صحيحة");
             }
         }
 
-        const map = {'أ': 'k1', 'ا': 'k2', 'ب': 'x7', 'ت': 'v3', 'ث': 'n9', 'ج': 'm2', 'ح': 'h8', 'خ': 'p4', 'د': 'r1', 'ذ': 'q0', 'ر': 's6', 'ز': 'u5', 'س': 'w4', 'ش': 'z3', 'ص': 'y8', 'ض': 'b2', 'ط': 'o1', 'ظ': 'i7', 'ع': 'e5', 'غ': 'g4', 'ف': 'f0', 'ق': 'q1', 'ك': 'k9', 'ل': 'l3', 'م': 'm0', 'ن': 'n4', 'هـ': 'h1', 'و': 'w2', 'ي': 'y5', 'ة': 't0', ' ': '..', 'ى': 'a8', 'ئ': 'e1', 'ء': 'x0'};
-        const reverseMap = {};
-        for (let key in map) { reverseMap[map[key]] = key; }
+        function handleLogout() { sessionStorage.clear(); location.reload(); }
 
-        function execute(isEnc) {
-            const input = document.getElementById('inputBox').value;
-            const outputField = document.getElementById('outputBox');
-            if (!input) return;
-            let res = '';
-            if (isEnc) {
-                for (let char of input) { res += map[char] || char; }
-            } else {
-                let text = input;
-                const keys = Object.keys(reverseMap).sort((a,b) => b.length - a.length);
-                for (let k of keys) {
-                    let regex = new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                    text = text.replace(regex, reverseMap[k]);
+        // نظام الحظر وإلغاء الحظر
+        function manageBan(uName, action) {
+            let users = JSON.parse(localStorage.getItem("kgt_v9_users"));
+            let idx = users.findIndex(u => u.name === uName);
+            if(idx !== -1) {
+                if(action === 'ban') {
+                    users[idx].banUntil = Date.now() + (60 * 60 * 1000); // ساعة
+                    alert(`تم حظر ${uName} لمدة ساعة`);
+                } else {
+                    users[idx].banUntil = 0; // فك الحظر
+                    alert(`تم فك الحظر عن ${uName}`);
                 }
-                res = text;
+                localStorage.setItem("kgt_v9_users", JSON.stringify(users));
+                loadOnline();
             }
-            outputField.value = res;
+        }
+
+        function checkStatus() {
+            let users = JSON.parse(localStorage.getItem("kgt_v9_users") || "[]");
+            let me = users.find(u => u.name === currentUser);
+            if(me && me.banUntil > Date.now()) {
+                document.getElementById('chatActiveUI').style.display = 'none';
+                document.getElementById('banOverlay').style.display = 'flex';
+                let rem = Math.ceil((me.banUntil - Date.now()) / 60000);
+                document.getElementById('banTimer').innerText = `متبقي على فك الحظر الإداري: ${rem} دقيقة`;
+            } else {
+                document.getElementById('chatActiveUI').style.display = 'flex';
+                document.getElementById('banOverlay').style.display = 'none';
+            }
+        }
+
+        function loadOnline() {
+            let users = JSON.parse(localStorage.getItem("kgt_v9_users") || "[]");
+            document.getElementById('onlineList').innerHTML = users.map(u => `
+                <div class="user-item">
+                    <span style="${u.banUntil > Date.now() ? 'text-decoration:line-through; color:red;' : ''}">${u.name}</span>
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        ${(isAdmin && u.name !== currentUser) ? 
+                            (u.banUntil > Date.now() ? 
+                                `<button onclick="manageBan('${u.name}','unban')" style="background:green; color:white; border:none; font-size:9px; padding:2px 5px; cursor:pointer;">Unban</button>` : 
+                                `<button onclick="manageBan('${u.name}','ban')" style="background:#400; color:white; border:none; font-size:9px; padding:2px 5px; cursor:pointer;">Ban 1h</button>`) 
+                            : ''}
+                        <span class="status-dot ${u.onDuty?'online':''}"></span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // نظام المهام وإصلاح حالتها
+        function toggleMission(i) {
+            let m = JSON.parse(localStorage.getItem("kgt_v9_missions"));
+            m[i].status = (m[i].status === 'done') ? 'pending' : 'done';
+            localStorage.setItem("kgt_v9_missions", JSON.stringify(m));
+            loadMissions();
+        }
+
+        function loadMissions() {
+            const m = JSON.parse(localStorage.getItem("kgt_v9_missions") || "[]");
+            document.getElementById('missionsListDisplay').innerHTML = m.map((x, i) => `
+                <div class="mission-card ${x.status==='done'?'status-done':'status-pending'}">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <b>${x.title}</b>
+                        <span style="font-size:10px; color:${x.status==='done'?'lime':'orange'};">[${x.status==='done'?'مكتملة':'قيد التنفيذ'}]</span>
+                    </div>
+                    <p style="font-size:11px; margin:5px 0; color:#ccc;">${x.body}</p>
+                    ${isAdmin ? `<button onclick="toggleMission(${i})" style="width:100%; padding:5px; background:#222; color:white; border:1px solid #444; cursor:pointer; font-size:10px;">تغيير الحالة</button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // الدردشة والـ Cooldown
+        function sendMsg(isPriv) {
+            if(!isPriv) {
+                const now = Date.now();
+                if(now - lastMsgTime < 30000 && !isAdmin) {
+                    alert("Cooldown: يرجى الانتظار 30 ثانية بين الرسائل"); return;
+                }
+                lastMsgTime = now;
+                startCooldownUI();
+            }
+            const inp = document.getElementById(isPriv ? 'adminMsgInput' : 'msgInput');
+            if(!inp.value.trim()) return;
+            const key = isPriv ? "kgt_v9_admin_chat" : "kgt_v9_chat";
+            let chat = JSON.parse(localStorage.getItem(key) || "[]");
+            chat.push({ id: Date.now(), user: currentUser, text: inp.value, isAdm: isAdmin });
+            localStorage.setItem(key, JSON.stringify(chat.slice(-50)));
+            inp.value = ""; loadChats();
+        }
+
+        function startCooldownUI() {
+            if(isAdmin) return;
+            const bar = document.getElementById('cooldownBar');
+            const btn = document.getElementById('sendBtn');
+            btn.disabled = true;
+            bar.style.transition = 'none'; bar.style.width = '100%';
+            setTimeout(() => { bar.style.transition = 'width 30s linear'; bar.style.width = '0%'; }, 10);
+            setTimeout(() => { btn.disabled = false; }, 30000);
+        }
+
+        // الوظائف الباقية (أرشيف، تشفير، الخ)
+        function loadChats(){["kgt_v9_chat","kgt_v9_admin_chat"].forEach(k=>{const b=document.getElementById(k==="kgt_v9_chat"?"chatBox":"adminChatBox");if(!b)return;const d=JSON.parse(localStorage.getItem(k)||"[]");b.innerHTML=d.map(m=>`<div class="msg ${m.isAdm?'adm-msg':''}"><b>${m.user}:</b> ${m.text} ${(m.user===currentUser||isAdmin)?`<span onclick="delMsg('${k}',${m.id})" style="color:red;cursor:pointer;font-size:9px;"> حذف</span>`:''}</div>`).join('');}); const s=document.getElementById('chatScroll'); s.scrollTop=s.scrollHeight;}
+        function delMsg(k,i){let d=JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(d.filter(x=>x.id!==i)));loadChats()}
+        function handleCipher(e){const i=document.getElementById('cipherInput').value;let r="";if(e){for(let c of i)r+=cMap[c]||c}else{let h=i.match(/.{1,2}/g)||[];for(let c of h)r+=rMap[c]||c}document.getElementById('cipherOutput').value=r}
+        function saveMission(){let m=JSON.parse(localStorage.getItem("kgt_v9_missions")||"[]");m.push({id:Date.now(),title:document.getElementById('mTitle').value,body:document.getElementById('mBody').value,status:'pending'});localStorage.setItem("kgt_v9_missions",JSON.stringify(m));closeModal('addMissionModal');loadMissions()}
+        function submitToArchive(){let a=JSON.parse(localStorage.getItem("kgt_v9_archive")||"[]");a.push({user:currentUser,url:document.getElementById('arcUrl').value,desc:document.getElementById('arcDesc').value,time:new Date().toLocaleString()});localStorage.setItem("kgt_v9_archive",JSON.stringify(a));closeModal('uploadModal')}
+        function loadArchive(){const a=JSON.parse(localStorage.getItem("kgt_v9_archive")||"[]");document.getElementById('fullArchiveDisplay').innerHTML=a.map(x=>`<div style="border:1px solid #222;padding:5px;margin-bottom:5px;"><b>${x.user}</b>: ${x.desc} <a href="${x.url}" target="_blank">فتح</a></div>`).join('')}
+        function toggleDuty(){let users=JSON.parse(localStorage.getItem("kgt_v9_users"));let idx=users.findIndex(u=>u.name===currentUser);if(idx!==-1){users[idx].onDuty=!users[idx].onDuty;localStorage.setItem("kgt_v9_users",JSON.stringify(users));document.getElementById('statusBtn').classList.toggle('on');document.getElementById('statusBtn').innerText=users[idx].onDuty?"ON DUTY":"OFF DUTY";loadOnline();}}
+        function openModal(i){document.getElementById(i).style.display='flex';if(i==='missionModal')loadMissions();if(i==='adminArchiveModal')loadArchive();if(i==='adminChatModal')loadChats();}
+        function closeModal(i){document.getElementById(i).style.display='none'}
+
+        if(currentUser) {
+            document.getElementById('authOverlay').style.display='none';
+            document.getElementById('mainDashboard').style.display='block';
+            document.getElementById('userDisp').innerText=currentUser;
+            if(isAdmin) {
+                document.querySelectorAll('.admin-only').forEach(e=>e.style.display='block');
+                document.getElementById('admBadge').style.display='inline';
+            }
+            setInterval(()=>{ document.getElementById('liveClock').innerText=new Date().toLocaleTimeString(); checkStatus(); },1000);
+            loadChats(); loadOnline();
+            setInterval(loadChats, 3000);
+            setInterval(loadOnline, 5000);
         }
     </script>
 </body>
