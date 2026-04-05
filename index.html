@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KGT | Public Security Organization</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Fira+Code:wght@400;700&display=swap');
+
+        :root {
+            --primary-red: #ff0000;
+            --bg-black: #000000;
+            --card-bg: #0a0a0a;
+            --border-color: #222;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .terminal-window {
+            width: 100%;
+            max-width: 850px;
+            background: var(--bg-black);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header-bar {
+            background: #111;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-red);
+        }
+
+        .dots { display: flex; gap: 8px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; background: #222; }
+        .dot.active { background: var(--primary-red); box-shadow: 0 0 10px var(--primary-red); }
+
+        .content { padding: 30px; }
+
+        .logo-container { text-align: center; margin-bottom: 20px; }
+        .logo-main {
+            width: 110px;
+            filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.4));
+        }
+
+        /* تنسيق العبارة: KGT بالأحمر وعلى اليسار */
+        .org-header-left {
+            font-family: 'Fira Code', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 10px;
+            direction: ltr;
+            padding-left: 5px;
+        }
+        
+        .kgt-red { color: var(--primary-red); letter-spacing: 2px; text-shadow: 0 0 5px rgba(255,0,0,0.3); }
+        .divider { color: #444; }
+        .pso-white { color: #fff; letter-spacing: 1px; font-size: 15px; }
+
+        .admin-list {
+            width: 100%;
+            margin-bottom: 30px;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+            direction: ltr;
+        }
+
+        .admin-row {
+            background: var(--card-bg);
+            border-left: 4px solid var(--primary-red);
+        }
+
+        .admin-row td {
+            padding: 15px;
+            color: #ccc;
+            text-align: left;
+        }
+
+        .admin-id { color: var(--primary-red); font-family: 'Fira Code', monospace; font-weight: bold; width: 120px; }
+        .admin-name { color: #fff; font-weight: bold; }
+        .admin-role {
+            border: 1px solid #333;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            background: #000;
+            color: #eee;
+            text-transform: uppercase;
+        }
+
+        .cipher-section { text-align: right; margin-top: 30px; }
+        .prompt { font-family: 'Fira Code', monospace; font-size: 13px; color: #888; margin-bottom: 10px; }
+        .prompt b { color: var(--primary-red); }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            background: #050505;
+            border: 1px solid #222;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            outline: none;
+            resize: none;
+            font-family: 'Cairo', sans-serif;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        textarea:focus { border-color: var(--primary-red); box-shadow: 0 0 10px rgba(255, 0, 0, 0.1); }
+
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        .kgt-btn {
+            background: transparent;
+            border: 1px solid var(--primary-red);
+            color: var(--primary-red);
+            padding: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .kgt-btn:hover { background: var(--primary-red); color: #000; box-shadow: 0 0 20px var(--primary-red); }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 11px;
+            color: #444;
+            text-align: left;
+            font-family: 'Fira Code', monospace;
+            border-top: 1px solid #111;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="terminal-window">
+    <div class="header-bar">
+        <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+        <div style="color: #444; font-size: 11px; font-family: monospace;">KGT_SECURE_OS_V4.4_FINAL</div>
+    </div>
+
+    <div class="content">
+        <div class="logo-container">
+            <img src="https://image2url.com/r2/default/images/1775407331513-22992673-cbbf-4fc5-97f6-67081bea1f3b.png" alt="KGT Logo" class="logo-main">
+        </div>
+        
+        <div class="org-header-left">
+            <span class="kgt-red">K.G.T</span>
+            <span class="divider">|</span>
+            <span class="pso-white">PUBLIC SECURITY ORGANIZATION</span>
+        </div>
+
+        <table class="admin-list">
+            <tr class="admin-row">
+                <td class="admin-id">Alexander</td>
+                <td class="admin-name">Alexander Michael Smith</td>
+                <td><span class="admin-role">Director of KGT</span></td>
+            </tr>
+            <tr class="admin-row">
+                <td class="admin-id">Beta</td>
+                <td class="admin-name">Dutch Arthur</td>
+                <td><span class="admin-role">Deputy of KGT</span></td>
+            </tr>
+            <tr class="admin-row">
+                <td class="admin-id">Smith</td>
+                <td class="admin-name">William Smith</td>
+                <td><span class="admin-role">Executive of KGT</span></td>
+            </tr>
+        </table>
+
+        <div class="cipher-section">
+            <div class="prompt"><b>root@KGT_SERVER</b>:~/ أدخل البيانات المراد معالجتها:</div>
+            <textarea id="inputBox" placeholder="اكتب النص هنا..."></textarea>
+            
+            <div class="btn-grid">
+                <button class="kgt-btn" onclick="execute(true)">[ تشفير آمن ]</button>
+                <button class="kgt-btn" onclick="execute(false)">[ فك التشفير ]</button>
+            </div>
+
+            <div class="prompt" style="margin-top:20px;"><b>system@output</b>:~/ النتيجة:</div>
+            <textarea id="outputBox" readonly placeholder="ستظهر النتائج هنا..."></textarea>
+        </div>
+
+        <div class="footer">
+            >> [SYSTEM READY] | [KGT_AUTHORIZATION_LEVEL_MAX] | [SECURITY: ACTIVE]
+        </div>
+    </div>
+</div>
+
+<script>
+    const map = {
+        'أ': 'k1', 'ا': 'k2', 'ب': 'x7', 'ت': 'v3', 'ث': 'n9', 'ج': 'm2', 
+        'ح': 'h8', 'خ': 'p4', 'د': 'r1', 'ذ': 'q0', 'ر': 's6', 'ز': 'u5',
+        'س': 'w4', 'ش': 'z3', 'ص': 'y8', 'ض': 'b2', 'ط': 'o1', 'ظ': 'i7',
+        'ع': 'e5', 'غ': 'g4', 'ف': 'f0', 'ق': 'q1', 'ك': 'k9', 'ل': 'l3',
+        'م': 'm0', 'ن': 'n4', 'هـ': 'h1', 'و': 'w2', 'ي': 'y5', 'ة': 't0',
+        ' ': '..', 'ى': 'a8', 'ئ': 'e1', 'ء': 'x0'
+    };
+
+    const reverseMap = {};
+    for (let key in map) { reverseMap[map[key]] = key; }
+
+    function execute(isEnc) {
+        const input = document.getElementById('inputBox').value;
+        const outputField = document.getElementById('outputBox');
+        
+        if (!input) {
+            outputField.value = "";
+            return;
+        }
+
+        let res = '';
+        if (isEnc) {
+            for (let char of input) { 
+                res += map[char] || char; 
+            }
+        } else {
+            let text = input;
+            const keys = Object.keys(reverseMap).sort((a,b) => b.length - a.length);
+            for (let k of keys) {
+                let regex = new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                text = text.replace(regex, reverseMap[k]);
+            }
+            res = text;
+        }
+        outputField.value = res;
+    }
+</script>
+
+</body>
+</html>
