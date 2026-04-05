@@ -2,53 +2,34 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>KGT PROJECT | ULTIMATE SYSTEM V22</title>
+    <title>KGT PROJECT | FIXED V24</title>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Share+Tech+Mono&display=swap');
-        :root { --red: #ff0000; --bg: #000; --win: #0a0a0a; --gold: #ffcc00; }
+        :root { --red: #ff0000; --win: #0a0a0a; }
         body, html { margin: 0; padding: 0; height: 100vh; overflow: hidden; font-family: 'Cairo', sans-serif; background: #000; color: white; }
 
-        /* شاشة التحميل (فيديو الهكر الجديد) */
-        #bootVideo { 
-            position: fixed; inset: 0; background: #000; z-index: 10000; 
-            display: none; justify-content: center; align-items: center; 
-        }
-        
-        /* واجهة الدخول */
-        #authOverlay { 
-            position: fixed; inset: 0; 
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://w0.peakpx.com/wallpaper/593/524/wallpaper-preview/hacking-digital-art-technology-computer.jpg');
-            background-size: cover; display: flex; justify-content: center; align-items: center; z-index: 9000; 
-        }
-        .auth-box { width: 350px; padding: 40px; background: rgba(10,10,10,0.95); border: 2px solid var(--red); border-radius: 15px; text-align: center; box-shadow: 0 0 30px rgba(255,0,0,0.3); }
+        /* شاشات النظام */
+        #bootVideo { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; }
+        #authOverlay { position: fixed; inset: 0; background: radial-gradient(circle, #1a0000, #000); display: flex; justify-content: center; align-items: center; z-index: 9000; }
+        .auth-box { width: 350px; padding: 40px; background: rgba(10,10,10,0.95); border: 2px solid var(--red); border-radius: 15px; text-align: center; }
 
         /* سطح المكتب */
-        #desktop { 
-            width: 100vw; height: calc(100vh - 45px); position: relative; padding: 30px; 
-            display: none; flex-direction: column; flex-wrap: wrap; align-content: flex-start; gap: 25px; 
-        }
-        .icon { width: 100px; text-align: center; cursor: pointer; transition: 0.3s; }
-        .icon:hover { transform: translateY(-5px); filter: drop-shadow(0 0 10px var(--red)); }
+        #desktop { width: 100vw; height: calc(100vh - 45px); position: relative; padding: 30px; display: none; flex-direction: column; flex-wrap: wrap; align-content: flex-start; gap: 25px; }
+        .icon { width: 100px; text-align: center; cursor: pointer; transition: 0.3s; z-index: 10; }
         .icon i { font-size: 50px; color: var(--red); }
-        .icon p { font-size: 12px; margin-top: 10px; font-weight: bold; text-shadow: 2px 2px 4px #000; }
+        .icon p { font-size: 12px; margin-top: 10px; font-weight: bold; }
 
-        /* النوافذ والبرامج */
-        .window { 
-            position: absolute; width: 600px; height: 450px; background: var(--win); 
-            border: 1px solid #333; border-radius: 12px; display: none; flex-direction: column; 
-            z-index: 100; box-shadow: 0 25px 50px rgba(0,0,0,1); 
-        }
+        /* النوافذ */
+        .window { position: absolute; width: 550px; height: 400px; background: var(--win); border: 1px solid #333; border-radius: 12px; display: none; flex-direction: column; box-shadow: 0 25px 50px rgba(0,0,0,1); top: 100px; left: 100px; }
         .win-head { background: #111; padding: 15px; display: flex; justify-content: space-between; cursor: move; border-bottom: 1px solid #222; }
         .win-body { flex: 1; padding: 20px; overflow: auto; background: #050505; }
         
-        /* الأزرار والمدخلات */
-        .input-dark { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: #fff; margin-bottom: 10px; outline: none;}
-        .btn-red { background: var(--red); color: #fff; border: none; padding: 12px; cursor: pointer; width: 100%; font-weight: bold; }
-        .btn-red:hover { background: #cc0000; }
+        .input-dark { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: #fff; margin-bottom: 10px; outline: none; box-sizing: border-box;}
+        .btn-red { background: var(--red); color: #fff; border: none; padding: 12px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 5px;}
         
         #taskbar { position: fixed; bottom: 0; width: 100%; height: 45px; background: #111; display: none; align-items: center; padding: 0 20px; border-top: 1px solid #222; z-index: 1000; justify-content: space-between;}
     </style>
@@ -61,70 +42,45 @@
 
     <div id="authOverlay">
         <div class="auth-box">
-            <h2 style="color:var(--red); font-family:'Share Tech Mono';">SYSTEM INITIALIZATION</h2>
-            <p style="font-size:12px; color:gray;">PROJECT CLOUD V22</p>
+            <h2 style="color:var(--red); font-family:'Share Tech Mono';">KGT SECURITY</h2>
             <input type="text" id="uName" class="input-dark" placeholder="Username">
             <input type="password" id="uPass" class="input-dark" placeholder="Password">
-            <div style="display:flex; gap:10px;">
-                <button onclick="authAction('in')" class="btn-red">LOGIN</button>
-                <button onclick="authAction('up')" class="btn-red" style="background:#222;">REGISTER</button>
-            </div>
+            <button onclick="authAction('in')" class="btn-red">LOGIN</button>
+            <button onclick="authAction('up')" class="btn-red" style="background:#222;">REGISTER</button>
         </div>
     </div>
 
     <div id="desktop">
-        <div class="icon" onclick="openWin('win_crypto')"><i class="fas fa-user-lock"></i><p>Encryptor</p></div>
+        <div class="icon" onclick="openWin('win_crypto')"><i class="fas fa-user-lock"></i><p>Crypto Tool</p></div>
         <div class="icon" onclick="openWin('win_ops')"><i class="fas fa-id-badge"></i><p>Duty Status</p></div>
-        <div class="icon" onclick="openWin('win_railway')"><i class="fas fa-globe" style="color:cyan;"></i><p>KGT Hub</p></div>
         <div class="icon" onclick="openWin('win_tasks')"><i class="fas fa-tasks"></i><p>Missions</p></div>
         <div class="icon" id="admIcon" style="display:none;" onclick="openWin('win_admin')"><i class="fas fa-shield-alt" style="color:gold;"></i><p>Admin Hub</p></div>
     </div>
 
-    <div id="win_ops" class="window" style="width:350px; height:400px;">
+    <div id="win_ops" class="window">
         <div class="win-head"><span>OPS_CENTER</span><div onclick="closeWin('win_ops')" style="cursor:pointer">×</div></div>
         <div class="win-body">
             <button id="dutyBtn" class="btn-red" onclick="toggleDuty()">TOGGLE DUTY</button>
-            <hr style="border:1px solid #222; margin:15px 0;">
-            <div id="dutyList"></div>
+            <div id="dutyList" style="margin-top:20px;"></div>
         </div>
     </div>
 
-    <div id="win_railway" class="window" style="width:80%; height:70%;">
-        <div class="win-head"><span>EXTERNAL_SERVER_ACCESS</span><div onclick="closeWin('win_railway')" style="cursor:pointer">×</div></div>
-        <div class="win-body" style="padding:0;"><iframe src="https://kgt.up.railway.app/" style="width:100%; height:100%; border:none;"></iframe></div>
-    </div>
-
-    <div id="win_crypto" class="window" style="height:350px;">
+    <div id="win_crypto" class="window">
         <div class="win-head"><span>CRYPTO_MODULE</span><div onclick="closeWin('win_crypto')">×</div></div>
         <div class="win-body">
-            <textarea id="cryIn" class="input-dark" placeholder="Text to process..."></textarea>
-            <button class="btn-red" onclick="cry('e')">ENCRYPT (Base64)</button>
-            <textarea id="cryOut" class="input-dark" style="margin-top:10px;" readonly></textarea>
+            <textarea id="cryIn" class="input-dark" style="height:80px;" placeholder="Enter text here..."></textarea>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-red" onclick="cryptoOp('e')">ENCRYPT</button>
+                <button class="btn-red" onclick="cryptoOp('d')" style="background:#222;">DECRYPT</button>
+            </div>
+            <textarea id="cryOut" class="input-dark" style="margin-top:10px; height:80px; border-color:lime;" readonly></textarea>
         </div>
     </div>
 
-    <div id="win_admin" class="window">
-        <div class="win-head"><span style="color:gold;">ADMIN_CONTROL_CENTER</span><div onclick="closeWin('win_admin')">×</div></div>
-        <div class="win-body">
-            <h4>Assign Member Roles</h4>
-            <div id="adminUserList"></div>
-            <hr style="border:1px solid #222; margin:20px 0;">
-            <h4>System Missions</h4>
-            <input type="text" id="mTitle" class="input-dark" placeholder="Mission Title">
-            <button class="btn-red" onclick="addTask()">PUSH MISSION</button>
-        </div>
-    </div>
+    <div id="win_admin" class="window"><div class="win-head"><span>ADMIN_HUB</span><div onclick="closeWin('win_admin')">×</div></div><div class="win-body"><div id="adminUserList"></div><hr><input type="text" id="mTitle" class="input-dark" placeholder="Mission Name"><button class="btn-red" onclick="addTask()">ADD</button></div></div>
+    <div id="win_tasks" class="window"><div class="win-head"><span>MISSIONS</span><div onclick="closeWin('win_tasks')">×</div></div><div class="win-body" id="taskList"></div></div>
 
-    <div id="win_tasks" class="window">
-        <div class="win-head"><span>ACTIVE_MISSIONS</span><div onclick="closeWin('win_tasks')">×</div></div>
-        <div class="win-body" id="taskList"></div>
-    </div>
-
-    <div id="taskbar">
-        <div style="color:var(--red); font-weight:bold;">KGT_OS_ACTIVE</div>
-        <div id="liveClock" class="mono"></div>
-        <div onclick="logout()" style="cursor:pointer; color:red;">SHUTDOWN</div>
-    </div>
+    <div id="taskbar"><div style="color:var(--red);">KGT_SYSTEM</div><div id="liveClock"></div><div onclick="logout()" style="cursor:pointer; color:red;">LOGOUT</div></div>
 
     <script>
         const firebaseConfig = {
@@ -137,41 +93,59 @@
             databaseURL: "https://kgtsystem-default-rtdb.firebaseio.com"
         };
 
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database();
 
         let user = sessionStorage.getItem("u");
         let rank = sessionStorage.getItem("r");
-        let currentDuty = false;
+        let currentDutyStatus = false;
+        let zIdx = 100;
 
+        // وظائف الفتح والغلق
+        function openWin(id) { zIdx++; const w = document.getElementById(id); w.style.display = 'flex'; w.style.zIndex = zIdx; }
+        function closeWin(id) { document.getElementById(id).style.display = 'none'; }
+
+        // تسجيل الدخول
         function authAction(type) {
             const u = document.getElementById('uName').value.trim();
             const p = document.getElementById('uPass').value.trim();
-            if(!u || !p) return alert("Missing Data");
+            if(!u || !p) return alert("Fill data");
 
             if(type === 'in') {
                 db.ref('users/'+u).once('value', s => {
                     const d = s.val();
                     if(d && d.pass === p) {
-                        sessionStorage.setItem("u", u); 
-                        sessionStorage.setItem("r", d.rank);
-                        startBootSequence();
-                    } else alert("Invalid Access");
+                        sessionStorage.setItem("u", u); sessionStorage.setItem("r", d.rank);
+                        startBoot();
+                    } else alert("Error");
                 });
             } else {
-                db.ref('users/'+u).set({name:u, pass:p, rank:'Member', onDuty:false}).then(()=>alert("Registered Successfully"));
+                db.ref('users/'+u).set({name:u, pass:p, rank:'Member', onDuty:false}).then(()=>alert("Registered"));
             }
         }
 
-        function startBootSequence() {
+        function startBoot() {
             document.getElementById('authOverlay').style.display = 'none';
-            const boot = document.getElementById('bootVideo');
-            const frame = document.getElementById('bootFrame');
-            // تم تحديث الرابط للفيديو الجديد الذي اخترته
-            frame.src = "https://www.youtube.com/embed/X2zbDC5HovM?autoplay=1&controls=0&mute=1&loop=1";    boot.style.display = 'flex';
-            setTimeout(() => { location.reload(); }, 5500); 
+            document.getElementById('bootVideo').style.display = 'block';
+            document.getElementById('bootFrame').src = "https://www.youtube.com/embed/X2zbDC5HovM?autoplay=1&mute=1";
+            setTimeout(() => { location.reload(); }, 6000); 
+        }
+
+        // إصلاح الـ Duty Status
+        function toggleDuty() {
+            if(!user) return;
+            currentDutyStatus = !currentDutyStatus;
+            db.ref('users/'+user).update({ onDuty: currentDutyStatus });
+        }
+
+        // إصلاح التشفير وفك التشفير
+        function cryptoOp(mode) {
+            const input = document.getElementById('cryIn').value;
+            const output = document.getElementById('cryOut');
+            try {
+                if(mode === 'e') output.value = btoa(input);
+                else output.value = atob(input);
+            } catch(e) { alert("Invalid Format!"); }
         }
 
         if(user) {
@@ -180,77 +154,36 @@
             document.getElementById('taskbar').style.display = 'flex';
             if(rank === 'Admin' || rank === 'Dictator') document.getElementById('admIcon').style.display = 'block';
 
-            // مراقبة الـ Duty و قائمة الأعضاء
+            // مراقبة المستخدمين والـ Duty
             db.ref('users').on('value', s => {
-                let dutyHtml = ""; 
-                let adminHtml = "";
-                s.forEach(snap => {
+                let h = ""; s.forEach(snap => {
                     const d = snap.val();
-                    // تحديث حالة الـ Duty الخاصة بك
                     if(d.name === user) {
-                        currentDuty = d.onDuty;
-                        document.getElementById('dutyBtn').style.background = currentDuty ? "green" : "red";
-                        document.getElementById('dutyBtn').innerText = currentDuty ? "ON DUTY" : "OFF DUTY";
+                        currentDutyStatus = d.onDuty;
+                        const btn = document.getElementById('dutyBtn');
+                        btn.style.background = d.onDuty ? "green" : "red";
+                        btn.innerText = d.onDuty ? "ON DUTY" : "OFF DUTY";
                     }
-                    // قائمة المتصلين
-                    dutyHtml += `<div style="padding:5px; color:${d.onDuty ? '#00ff00' : '#555'}">● ${d.name} (${d.rank})</div>`;
-                    
-                    // قائمة الإدارة
-                    adminHtml += `<div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                        <span>${d.name}</span>
-                        <button onclick="setRank('${d.name}')" style="font-size:10px;">Set Rank</button>
-                    </div>`;
+                    h += `<div style="padding:5px; color:${d.onDuty?'lime':'#555'}">● ${d.name} [${d.rank}]</div>`;
                 });
-                document.getElementById('dutyList').innerHTML = dutyHtml;
-                document.getElementById('adminUserList').innerHTML = adminHtml;
-            });
-
-            // مزامنة المهام
-            db.ref('tasks').on('value', s => {
-                let h = ""; s.forEach(snap => { h += `<div style="background:#111; padding:10px; margin-bottom:5px; border-left:3px solid red; font-size:13px;">${snap.val().title}</div>`; });
-                document.getElementById('taskList').innerHTML = h || "No active missions.";
+                document.getElementById('dutyList').innerHTML = h;
             });
         }
 
-        function toggleDuty() {
-            db.ref('users/'+user).update({ onDuty: !currentDuty });
-        }
-
-        function openWin(id) { document.getElementById(id).style.display='flex'; }
-        function closeWin(id) { document.getElementById(id).style.display='none'; }
         function logout() { sessionStorage.clear(); location.reload(); }
         
-        function cry(t) { 
-            const val = document.getElementById('cryIn').value;
-            document.getElementById('cryOut').value = btoa(val); 
-        }
-
-        function addTask() {
-            const t = document.getElementById('mTitle').value;
-            if(t) {
-                db.ref('tasks').push({title: t});
-                document.getElementById('mTitle').value = "";
-            }
-        }
-
-        function setRank(name) {
-            const newRank = prompt("Enter Rank (Admin/Member/Dictator):");
-            if(newRank) db.ref('users/'+name).update({rank: newRank});
-        }
-
         // تحريك النوافذ
         document.querySelectorAll('.win-head').forEach(h => {
             h.onmousedown = function(e) {
                 let w = h.parentElement;
+                zIdx++; w.style.zIndex = zIdx;
                 let ox = e.clientX - w.offsetLeft, oy = e.clientY - w.offsetTop;
                 document.onmousemove = e => { w.style.left = (e.clientX-ox)+'px'; w.style.top = (e.clientY-oy)+'px'; };
                 document.onmouseup = () => document.onmousemove = null;
             }
         });
 
-        setInterval(() => { 
-            document.getElementById('liveClock').innerText = new Date().toLocaleTimeString(); 
-        }, 1000);
+        setInterval(() => { document.getElementById('liveClock').innerText = new Date().toLocaleTimeString(); }, 1000);
     </script>
 </body>
 </html>
